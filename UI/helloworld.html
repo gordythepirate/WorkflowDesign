@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<!--These lines act as our imports
+    We can add more javascript source later if we need access to more libraries-->
+<link rel="stylesheet" href="joint.css" />
+<script src="joint.js"></script>
+<script src="joint.shapes.erd.js"></script>
+</head>
+
+<body>
+<div id="myholder"></div>
+<script type="text/javascript">
+
+// Create a Graph object
+// This will hold all elements of our workflow including shapes (entities) and connections (links)
+var graph = new joint.dia.Graph;
+
+// Create a Paper object
+// A Paper is essentially a viewport--this enables us to see our elements on-screen
+var workflow = new joint.dia.Paper({
+	el: $('#myholder'),	// This line has to match up with the div id from above
+	width: 1280,
+	height: 720,
+	model: graph,		// What Graph object this Paper belongs to
+	gridSize: 20		// Snaps elements to the grid--makes for a cleaner look
+});
+
+// Method: newLink
+// Purpose: Creates a link (relationship) between a source element and a target element
+function newLink(src, trg)
+{
+	var cell = new joint.dia.Link({
+		source: {id: src.id},
+		target: {id: trg.id}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+// The following methods create various elements that we can use in our workflow
+// The methods create the entity based on a given coordinate position as well as a given label
+// If needed, we can tweak these functions to make our default elements smaller/larger/etc
+function newRectangle(x, y, label)
+{
+	var cell = new joint.shapes.basic.Rect({
+		position: {x: x, y: y},
+		size: {width: 160, height: 80},
+		attrs: {text: {text: label, fill: 'black'}}
+	});
+	graph.addCell(cell);	// Adds the entity to our Graph, allowing us to view and manipulate it
+	return cell;	// Return the entity so we can manipulate it through code later
+};
+
+function newRoundedRectangle(x, y, label)
+{
+	var cell = new joint.shapes.erd.Entity({
+		position: {x: x, y: y},
+		size: {width: 160, height: 80},
+		attrs: {'.outer': {fill: 'white', stroke: 'black', 'stroke-width': 1, points: '96,0 100,4 100,56 96,60 4,60 0,56 0,4 4,0'},
+			'.inner': {fill: 'white', stroke: 'black', 'stroke-width': 1},
+			text: {text: label}}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+function newSquare(x, y, label)
+{
+	var cell = new joint.shapes.basic.Rect({
+		position: {x: x, y: y},
+		size: {width: 160, height: 160},
+		attrs: {text: {text: label, fill: 'black'}}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+function newTriangle(x, y, label)
+{
+	var cell = new joint.shapes.basic.Path({
+		position: {x: x, y: y},
+		size: {width: 80, height: 80},
+		attrs: {path: {d: 'M 0 60 L 60 60 30 0 z'}, text: {text: label, fill: 'black'}}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+function newDiamond(x, y, label)
+{
+	var cell = new joint.shapes.basic.Path({
+		position: {x: x, y: y},
+		size: {width: 80, height: 80},
+		attrs: {path: {d: 'M 30 0 L 60 30 30 60 0 30 z'}, text: {text: label, fill: 'black'}}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+function newCircle(x, y, label)
+{
+	var cell = new joint.shapes.basic.Circle({
+		position: {x: x, y: y},
+		size: {width: 80, height: 80},
+		attrs: {text: {text: label, fill: 'black'}}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+function newEllipse(x, y, label)
+{
+	var cell = new joint.shapes.basic.Circle({
+		position: {x: x, y: y},
+		size: {width: 120, height: 80},
+		attrs: {text: {text: label, fill: 'black'}}
+	});
+	graph.addCell(cell);
+	return cell;
+};
+
+
+// Now we create our actual entities and links (known collectively as cells)
+// We can manipulate existing cells later by using their variable name along with functions provided in joint.js
+var c1 = newCircle(40, 40, 'my circle');
+var e1 = newEllipse(140, 40, 'my ellipse');
+var r1 = newRectangle(40, 140, 'my rectangle');
+var rr1 = newRoundedRectangle(240, 140, 'my rounded rectangle');
+var d1 = newDiamond(40, 240, 'my diamond');
+var t1 = newTriangle(140, 240, 'my triangle');
+
+var l1 = newLink(c1, e1);
+var l2 = newLink(r1, rr1);
+var l3 = newLink(d1, t1);
+
+/*
+var rect2 = rect.clone();
+rect2.translate(300);
+*/
+
+</script>
+</body>
+</html>
