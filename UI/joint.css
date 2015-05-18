@@ -236,3 +236,32 @@ Do not allow adding new vertices: .connection-wrap { pointer-events: none; }
     display: table-cell;
     padding: 0px 5px 0px 5px;
 }
+
+.html-element-rectangle select,
+.html-element-rectangle input,
+.html-element-rectangle textarea {
+	display: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	margin-left: 10%;
+	height: 20px;
+	width: 120px;
+	resize: none;
+	text-align: center;
+	overflow: hidden;
+},
+.html-element-rectangle button {
+	pointer-events: auto;
+}
+.html-element-rectangle:hover textarea {
+	display: block;
+}
+
+.delete {
+	opacity: 0;
+}
+.delete:hover {
+	opacity: 1;
+}

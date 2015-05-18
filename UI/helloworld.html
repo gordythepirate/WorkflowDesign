@@ -3,67 +3,119 @@
 <head>
 <meta charset="UTF-8">
 
-<!--These lines act as our imports
-    We can add more javascript source later if we need access to more libraries-->
 <link rel="stylesheet" href="joint.css" />
-<script src="joint.js"></script>
-<script src="joint.shapes.erd.js"></script>
-</head>
+<style type="text/css">
+	#sHolder .html-element-close
+	{
+		position: absolute;
+		margin-left: 6px;
+		background-color: transparent;
+		opacity: 0;
+		pointer-events: none;
+		-webkit-user-select: none;
+	}
+	#sHolder .html-element-rectangle
+	{
+		position: absolute;
+		margin-left: 7px;
+		padding: 0px 0 0px 0;
+		background-color: transparent;
+		border-radius: 0px;
+		pointer-events: none;
+		-webkit-user-select: none;
+	}
+	#dHolder .html-element-close
+	{
+		position: absolute;
+		margin-left: 6px;
+		background-color: transparent;
+		pointer-events: auto;
+		-webkit-user-select: none;
+	}
+	#dHolder .html-element-rectangle
+	{
+		position: absolute;
+		margin-top: 22px;
+		margin-left: 7px;
+		padding: 0px 0 40px 0;
+		background-color: transparent;
+		border-radius: 50px;
+		pointer-events: auto;
+		-webkit-user-select: none;
+	}
+</style>
 
+</head>
+<title>Workflow Designer</title>
 <body>
-<div id="myholder"></div>
+
+<!--We have to ensure our paper objects below match up with this div id-->
+<div id="sHolder"></div>
+<div id="dHolder"></div>
+
+<!--Now we tell the HTML that we're going to start coding in javascript-->
+<script src="joint.js"></script>
+<script src="joint.shapes.html.js"></script>
+<script src="joint.shapes.erd.js"></script>	<!--You can download this source file from the same joint.js site-->
 <script type="text/javascript">
 
-// Create a Graph object
+// Create a Graph object (and switching to javascript comments)
 // This will hold all elements of our workflow including shapes (entities) and connections (links)
-var graph = new joint.dia.Graph;
+var sGraph = new joint.dia.Graph;
+var dGraph = new joint.dia.Graph;
 
-// Create a Paper object
-// A Paper is essentially a viewport--this enables us to see our elements on-screen
-var workflow = new joint.dia.Paper({
-	el: $('#myholder'),	// This line has to match up with the div id from above
-	width: 1280,
-	height: 720,
-	model: graph,		// What Graph object this Paper belongs to
-	gridSize: 20		// Snaps elements to the grid--makes for a cleaner look
+// Create a paper object
+// A paper is essentially a viewport--this enables us to see our elements on-screen
+var sPaper = new joint.dia.Paper({
+	el: $('#sHolder'),	// This line has to match up with the div id from above
+	width: screen.width,
+	height: 120,
+	origin: {x: 0, y: 0},
+	model: sGraph,		// What Graph object this paper belongs to
+	interactive: false
+});
+
+var dPaper = new joint.dia.Paper({
+	el: $('#dHolder'),
+	width: screen.width,
+	height: screen.height,
+	origin: {x:0, y: 120},
+	model: dGraph,
+	gridSize: 3
 });
 
 // Method: newLink
 // Purpose: Creates a link (relationship) between a source element and a target element
-function newLink(src, trg)
+function newLink(x, y, label)
 {
 	var cell = new joint.dia.Link({
-		source: {id: src.id},
-		target: {id: trg.id}
+		source: {x: x, y: y},
+		target: {x: x + 80, y: y}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
 // The following methods create various elements that we can use in our workflow
-// The methods create the entity based on a given coordinate position as well as a given label
+// The methods create the entity based on a given coordinate position
 // If needed, we can tweak these functions to make our default elements smaller/larger/etc
-function newRectangle(x, y, label)
+function newRectangle(x, y)
 {
-	var cell = new joint.shapes.basic.Rect({
+	var cell = new joint.shapes.html.Rectangle({
 		position: {x: x, y: y},
-		size: {width: 160, height: 80},
-		attrs: {text: {text: label, fill: 'black'}}
+		size: {width: 80, height: 40}
 	});
-	graph.addCell(cell);	// Adds the entity to our Graph, allowing us to view and manipulate it
-	return cell;	// Return the entity so we can manipulate it through code later
+	return cell;	// Return the entity so we can manipulate it in our code later
 };
 
 function newRoundedRectangle(x, y, label)
 {
 	var cell = new joint.shapes.erd.Entity({
 		position: {x: x, y: y},
-		size: {width: 160, height: 80},
+		size: {width: 80, height: 40},
 		attrs: {'.outer': {fill: 'white', stroke: 'black', 'stroke-width': 1, points: '96,0 100,4 100,56 96,60 4,60 0,56 0,4 4,0'},
 			'.inner': {fill: 'white', stroke: 'black', 'stroke-width': 1},
-			text: {text: label}}
+			text: {text: label, magnet: true}}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
@@ -71,10 +123,9 @@ function newSquare(x, y, label)
 {
 	var cell = new joint.shapes.basic.Rect({
 		position: {x: x, y: y},
-		size: {width: 160, height: 160},
-		attrs: {text: {text: label, fill: 'black'}}
+		size: {width: 40, height: 40},
+		attrs: {text: {text: label, fill: 'black', magnet: true}}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
@@ -82,10 +133,9 @@ function newTriangle(x, y, label)
 {
 	var cell = new joint.shapes.basic.Path({
 		position: {x: x, y: y},
-		size: {width: 80, height: 80},
-		attrs: {path: {d: 'M 0 60 L 60 60 30 0 z'}, text: {text: label, fill: 'black'}}
+		size: {width: 40, height: 40},
+		attrs: {path: {d: 'M 0 20 L 20 20 10 0 z'}, text: {text: label, fill: 'black', magnet: true}}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
@@ -93,10 +143,9 @@ function newDiamond(x, y, label)
 {
 	var cell = new joint.shapes.basic.Path({
 		position: {x: x, y: y},
-		size: {width: 80, height: 80},
-		attrs: {path: {d: 'M 30 0 L 60 30 30 60 0 30 z'}, text: {text: label, fill: 'black'}}
+		size: {width: 40, height: 40},
+		attrs: {path: {d: 'M 10 0 L 20 10 10 20 0 10 z'}, text: {text: label, fill: 'black', magnet: true}}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
@@ -104,10 +153,9 @@ function newCircle(x, y, label)
 {
 	var cell = new joint.shapes.basic.Circle({
 		position: {x: x, y: y},
-		size: {width: 80, height: 80},
-		attrs: {text: {text: label, fill: 'black'}}
+		size: {width: 40, height: 40},
+		attrs: {text: {text: label, fill: 'black', magnet: true}}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
@@ -115,32 +163,111 @@ function newEllipse(x, y, label)
 {
 	var cell = new joint.shapes.basic.Circle({
 		position: {x: x, y: y},
-		size: {width: 120, height: 80},
-		attrs: {text: {text: label, fill: 'black'}}
+		size: {width: 80, height: 40},
+		attrs: {text: {text: label, fill: 'black', magnet: true}}
 	});
-	graph.addCell(cell);
 	return cell;
 };
 
 
-// Now we create our actual entities and links (known collectively as cells)
-// We can manipulate existing cells later by using their variable name along with functions provided in joint.js
-var c1 = newCircle(40, 40, 'my circle');
-var e1 = newEllipse(140, 40, 'my ellipse');
-var r1 = newRectangle(40, 140, 'my rectangle');
-var rr1 = newRoundedRectangle(240, 140, 'my rounded rectangle');
-var d1 = newDiamond(40, 240, 'my diamond');
-var t1 = newTriangle(140, 240, 'my triangle');
-
-var l1 = newLink(c1, e1);
-var l2 = newLink(r1, rr1);
-var l3 = newLink(d1, t1);
 
 /*
-var rect2 = rect.clone();
-rect2.translate(300);
+function newRoundedRectangle(x, y, label)
+{
+	var cell = new joint.shapes.erd.Entity({
+		position: {x: x, y: y},
+		size: {width: 80, height: 40},
+		attrs: {'.outer': {fill: 'white', stroke: 'black', 'stroke-width': 1, points: '96,0 100,4 100,56 96,60 4,60 0,56 0,4 4,0'},
+			'.inner': {fill: 'white', stroke: 'black', 'stroke-width': 1},
+			text: {text: label, magnet: true}}
+	});
+	return cell;
+};
+
+function newSquare(x, y, label)
+{
+	var cell = new joint.shapes.basic.Rect({
+		position: {x: x, y: y},
+		size: {width: 40, height: 40},
+		attrs: {text: {text: label, fill: 'black', magnet: true}}
+	});
+	return cell;
+};
+
+function newTriangle(x, y, label)
+{
+	var cell = new joint.shapes.basic.Path({
+		position: {x: x, y: y},
+		size: {width: 40, height: 40},
+		attrs: {path: {d: 'M 0 20 L 20 20 10 0 z'}, text: {text: label, fill: 'black', magnet: true}}
+	});
+	return cell;
+};
+
+function newDiamond(x, y, label)
+{
+	var cell = new joint.shapes.basic.Path({
+		position: {x: x, y: y},
+		size: {width: 40, height: 40},
+		attrs: {path: {d: 'M 10 0 L 20 10 10 20 0 10 z'}, text: {text: label, fill: 'black', magnet: true}}
+	});
+	return cell;
+};
+
+function newCircle(x, y, label)
+{
+	var cell = new joint.shapes.basic.Circle({
+		position: {x: x, y: y},
+		size: {width: 40, height: 40},
+		attrs: {text: {text: label, fill: 'black', magnet: true}}
+	});
+	return cell;
+};
+
+function newEllipse(x, y, label)
+{
+	var cell = new joint.shapes.basic.Circle({
+		position: {x: x, y: y},
+		size: {width: 80, height: 40},
+		attrs: {text: {text: label, fill: 'black', magnet: true}}
+	});
+	return cell;
+};
 */
 
+// Now we create our actual entities and links (known collectively as cells)
+// We can manipulate existing cells later by using their variable name along with functions provided in joint.js
+var link = newLink(10, 40, '');
+var square = newSquare(100, 20, '');
+var rectangle = newRectangle(150, 20);
+var roundedRectangle = newRoundedRectangle(240, 20, '');
+var circle = newCircle(330, 20, '');
+var ellipse = newEllipse(380, 20, '');
+var diamond = newDiamond(470, 20, '');
+var triangle = newTriangle(520, 20, '');
+
+// Add our entities to the Graph, allowing us to view and manipulate them
+sGraph.addCells([link, square, rectangle, roundedRectangle, circle, ellipse, diamond, triangle]);
+
+sPaper.on('cell:pointerclick', function(cellView, evt, x, y)
+{	
+	var newElement = cellView.model.clone();
+	dGraph.addCell(newElement);
+	newElement.prop('position/x', 10);
+	newElement.prop('position/y', 20);
+	newElement.prop('size/width', newElement.prop('size/width') * 2);
+	newElement.prop('size/height', newElement.prop('size/height') * 2);
+	newElement.prop('inPorts', ['in']);
+	newElement.prop('outPorts', ['out']);
+	newElement.toBack();
+});
+
+dPaper.on('cell:pointerdown', function(cellView, evt, x, y)
+{
+	cellView.model.toFront();
+});
+
+// Remember to close our script tag and HTML tags
 </script>
 </body>
 </html>
