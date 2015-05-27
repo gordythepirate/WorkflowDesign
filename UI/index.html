@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 
+<link rel="stylesheet" href="menubar.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<!--<script src="menubar.js"></script>-->
+
 <link rel="stylesheet" href="joint.css" />
 <style type="text/css">
 	#sHolder .html-element-close
@@ -14,7 +18,37 @@
 		pointer-events: none;
 		-webkit-user-select: none;
 	}
+	#sHolder .html-element-square
+	{
+		position: absolute;
+		margin-left: 7px;
+		padding: 0px 0 0px 0;
+		background-color: transparent;
+		border-radius: 0px;
+		pointer-events: none;
+		-webkit-user-select: none;
+	}
+	#sHolder .html-element-diamond
+	{
+		position: absolute;
+		margin-left: 7px;
+		padding: 0px 0 0px 0;
+		background-color: transparent;
+		border-radius: 0px;
+		pointer-events: none;
+		-webkit-user-select: none;
+	}
 	#sHolder .html-element-rectangle
+	{
+		position: absolute;
+		margin-left: 7px;
+		padding: 0px 0 0px 0;
+		background-color: transparent;
+		border-radius: 0px;
+		pointer-events: none;
+		-webkit-user-select: none;
+	}
+	#sHolder .html-element-circle
 	{
 		position: absolute;
 		margin-left: 7px;
@@ -32,7 +66,40 @@
 		pointer-events: auto;
 		-webkit-user-select: none;
 	}
+	#dHolder .html-element-square
+	{
+		position: absolute;
+		margin-top: 22px;
+		margin-left: 7px;
+		padding: 0px 0 40px 0;
+		background-color: transparent;
+		border-radius: 50px;
+		pointer-events: auto;
+		-webkit-user-select: none;
+	}
+	#dHolder .html-element-diamond
+	{
+		position: absolute;
+		margin-top: 22px;
+		margin-left: 7px;
+		padding: 0px 0 40px 0;
+		background-color: transparent;
+		border-radius: 50px;
+		pointer-events: auto;
+		-webkit-user-select: none;
+	}
 	#dHolder .html-element-rectangle
+	{
+		position: absolute;
+		margin-top: 22px;
+		margin-left: 7px;
+		padding: 0px 0 40px 0;
+		background-color: transparent;
+		border-radius: 50px;
+		pointer-events: auto;
+		-webkit-user-select: none;
+	}
+	#dHolder .html-element-circle
 	{
 		position: absolute;
 		margin-top: 22px;
@@ -49,6 +116,15 @@
 <title>Workflow Designer</title>
 <body>
 
+<div class="navigation">
+	<ul class="nav">
+	<li><a href="index.html" class="ConfirmNew">New...</a></li>
+	<li><a href="#" class="ConfirmOpen">Open...</a></li>
+	<li><a href="#">Save</a></li>
+	<li><a href="#" class="OpenHelp">Help</a></li>
+	</ul>
+</div>
+
 <!--We have to ensure our paper objects below match up with this div id-->
 <div id="sHolder"></div>
 <div id="dHolder"></div>
@@ -58,6 +134,21 @@
 <script src="joint.shapes.html.js"></script>
 <script src="joint.shapes.erd.js"></script>	<!--You can download this source file from the same joint.js site-->
 <script type="text/javascript">
+
+$('.ConfirmNew').on('click', function()
+{
+	return confirm('Are you sure you\'d like to create a new Workflow?\n\nUnsaved changes will be discarded.');
+});
+
+$('.ConfirmOpen').on('click', function()
+{
+	return confirm('Are you sure you\'d like to open a new Workflow?\n\nUnsaved changes will be discarded.');
+});
+
+$('.OpenHelp').on('click', function()
+{
+	return alert('This Workflow is very basic in its design and functionality.\n\nAt the top-left are your available shapes and links. Click an element to add it to the page.\nAll elements are draggable from their corners and can be moved around freely.\nHovering over the middle of an element will display a text box. Enter text into the field and click off of the element to set that element\'s label.\nAt the top and bottom of elements are what are called \'magnets\'. Click and drag from a magnet to create a link. Links can be attached to other elements.\nTo remove an element from the page, hover over the top-left corner of the element and click the \'X\'.');
+});
 
 // Create a Graph object (and switching to javascript comments)
 // This will hold all elements of our workflow including shapes (entities) and connections (links)
@@ -69,7 +160,7 @@ var dGraph = new joint.dia.Graph;
 var sPaper = new joint.dia.Paper({
 	el: $('#sHolder'),	// This line has to match up with the div id from above
 	width: screen.width,
-	height: 120,
+	height: 80,
 	origin: {x: 0, y: 0},
 	model: sGraph,		// What Graph object this paper belongs to
 	interactive: false
@@ -78,15 +169,15 @@ var sPaper = new joint.dia.Paper({
 var dPaper = new joint.dia.Paper({
 	el: $('#dHolder'),
 	width: screen.width,
-	height: screen.height,
+	height: screen.height * 5,
 	origin: {x:0, y: 120},
 	model: dGraph,
-	gridSize: 3
+	gridSize: 4
 });
 
 // Method: newLink
 // Purpose: Creates a link (relationship) between a source element and a target element
-function newLink(x, y, label)
+function newLink(x, y)
 {
 	var cell = new joint.dia.Link({
 		source: {x: x, y: y},
@@ -98,13 +189,31 @@ function newLink(x, y, label)
 // The following methods create various elements that we can use in our workflow
 // The methods create the entity based on a given coordinate position
 // If needed, we can tweak these functions to make our default elements smaller/larger/etc
+function newSquare(x, y)
+{
+	var cell = new joint.shapes.html.Square({
+		position: {x: x, y: y},
+		size: {width: 40, height: 40}
+	});
+	return cell;	// Return the entity so we can manipulate it in our code later
+};
+
+function newDiamond(x, y)
+{
+	var cell = new joint.shapes.html.Diamond({
+		position: {x: x, y: y},
+		size: {width: 40, height: 40}
+	});
+	return cell;
+};
+
 function newRectangle(x, y)
 {
 	var cell = new joint.shapes.html.Rectangle({
 		position: {x: x, y: y},
 		size: {width: 80, height: 40}
 	});
-	return cell;	// Return the entity so we can manipulate it in our code later
+	return cell;
 };
 
 function newRoundedRectangle(x, y, label)
@@ -119,16 +228,6 @@ function newRoundedRectangle(x, y, label)
 	return cell;
 };
 
-function newSquare(x, y, label)
-{
-	var cell = new joint.shapes.basic.Rect({
-		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-
 function newTriangle(x, y, label)
 {
 	var cell = new joint.shapes.basic.Path({
@@ -139,111 +238,33 @@ function newTriangle(x, y, label)
 	return cell;
 };
 
-function newDiamond(x, y, label)
+function newCircle(x, y)
 {
-	var cell = new joint.shapes.basic.Path({
+	var cell = new joint.shapes.html.Circle({
 		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {path: {d: 'M 10 0 L 20 10 10 20 0 10 z'}, text: {text: label, fill: 'black', magnet: true}}
+		size: {width: 40, height: 40}
 	});
 	return cell;
 };
 
-function newCircle(x, y, label)
+function newEllipse(x, y)
 {
-	var cell = new joint.shapes.basic.Circle({
+	var cell = new joint.shapes.html.Circle({
 		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {text: {text: label, fill: 'black', magnet: true}}
+		size: {width: 80, height: 40}
 	});
 	return cell;
 };
-
-function newEllipse(x, y, label)
-{
-	var cell = new joint.shapes.basic.Circle({
-		position: {x: x, y: y},
-		size: {width: 80, height: 40},
-		attrs: {text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-
-
-
-/*
-function newRoundedRectangle(x, y, label)
-{
-	var cell = new joint.shapes.erd.Entity({
-		position: {x: x, y: y},
-		size: {width: 80, height: 40},
-		attrs: {'.outer': {fill: 'white', stroke: 'black', 'stroke-width': 1, points: '96,0 100,4 100,56 96,60 4,60 0,56 0,4 4,0'},
-			'.inner': {fill: 'white', stroke: 'black', 'stroke-width': 1},
-			text: {text: label, magnet: true}}
-	});
-	return cell;
-};
-
-function newSquare(x, y, label)
-{
-	var cell = new joint.shapes.basic.Rect({
-		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-
-function newTriangle(x, y, label)
-{
-	var cell = new joint.shapes.basic.Path({
-		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {path: {d: 'M 0 20 L 20 20 10 0 z'}, text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-
-function newDiamond(x, y, label)
-{
-	var cell = new joint.shapes.basic.Path({
-		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {path: {d: 'M 10 0 L 20 10 10 20 0 10 z'}, text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-
-function newCircle(x, y, label)
-{
-	var cell = new joint.shapes.basic.Circle({
-		position: {x: x, y: y},
-		size: {width: 40, height: 40},
-		attrs: {text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-
-function newEllipse(x, y, label)
-{
-	var cell = new joint.shapes.basic.Circle({
-		position: {x: x, y: y},
-		size: {width: 80, height: 40},
-		attrs: {text: {text: label, fill: 'black', magnet: true}}
-	});
-	return cell;
-};
-*/
 
 // Now we create our actual entities and links (known collectively as cells)
 // We can manipulate existing cells later by using their variable name along with functions provided in joint.js
-var link = newLink(10, 40, '');
-var square = newSquare(100, 20, '');
-var rectangle = newRectangle(150, 20);
-var roundedRectangle = newRoundedRectangle(240, 20, '');
-var circle = newCircle(330, 20, '');
-var ellipse = newEllipse(380, 20, '');
-var diamond = newDiamond(470, 20, '');
+var link = newLink(10, 40);
+var square = newSquare(100, 20);
+var diamond = newDiamond(150, 20);
+var rectangle = newRectangle(200, 20);
+var roundedRectangle = newRoundedRectangle(290, 20, '');
+var circle = newCircle(380, 20);
+var ellipse = newEllipse(430, 20);
 var triangle = newTriangle(520, 20, '');
 
 // Add our entities to the Graph, allowing us to view and manipulate them

@@ -237,6 +237,70 @@ Do not allow adding new vertices: .connection-wrap { pointer-events: none; }
     padding: 0px 5px 0px 5px;
 }
 
+
+
+
+
+.html-element-square select,
+.html-element-square input,
+.html-element-square textarea {
+	display: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	margin-left: 10%;
+	height: 20px;
+	width: 60px;
+	resize: none;
+	text-align: center;
+	overflow: hidden;
+},
+.html-element-square button {
+	pointer-events: auto;
+}
+.html-element-square:hover textarea {
+	display: block;
+}
+
+
+
+
+
+
+
+
+
+.html-element-diamond select,
+.html-element-diamond input,
+.html-element-diamond textarea {
+	display: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	margin-left: 10%;
+	height: 20px;
+	width: 60px;
+	resize: none;
+	text-align: center;
+	overflow: hidden;
+},
+.html-element-diamond button {
+	pointer-events: auto;
+}
+.html-element-diamond:hover textarea {
+	display: block;
+}
+
+
+
+
+
+
+
+
+
 .html-element-rectangle select,
 .html-element-rectangle input,
 .html-element-rectangle textarea {
@@ -259,9 +323,52 @@ Do not allow adding new vertices: .connection-wrap { pointer-events: none; }
 	display: block;
 }
 
+
+
+
+
+
+
+
+
+.html-element-circle select,
+.html-element-circle input,
+.html-element-circle textarea {
+	display: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	margin-left: 10%;
+	height: 20px;
+	width: 60px;
+	resize: none;
+	text-align: center;
+	overflow: hidden;
+},
+.html-element-circle button {
+	pointer-events: auto;
+}
+.html-element-circle:hover textarea {
+	display: block;
+}
+
+
+
+
+
+
+
+
+
+
 .delete {
 	opacity: 0;
 }
 .delete:hover {
 	opacity: 1;
+}
+
+#dHolder {
+    background: url(grid.jpg);
 }
